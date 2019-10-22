@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">GestaoCombustivel</string>
+    <string name="abastecimentos">Abastecimentos</string>
+    <string name="unidade">km / L</string>
+    <string name="default_km">0</string>
+    <string name="title_activity_lista_abastecimento">ListaAbastecimentoActivity</string>
+    <string name="title_activity_lista">ListaActivity</string>
+    <string name="salvar">Salvar</string>
+    <string name="excluir">Excluir</string>
+    <string name="quilometragem_atual">Quilometragem Atual</string>
+    <string name="litros_abastecidos">Litros Abastecidos</string>
+    <string name="data_de_abastecimento">Data de Abastecimento</string>
+    <string name="posto">Posto</string>
+    <string-array name="array_postos">
+        <item>Texaco</item>
+        <item>Shell</item>
+        <item>Petrobras</item>
+        <item>Ipiranga</item>
+        <item>Outros</item>
+    </string-array>
+</resources>
