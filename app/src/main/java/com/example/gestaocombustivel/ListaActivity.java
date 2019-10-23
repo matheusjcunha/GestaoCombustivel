@@ -44,26 +44,6 @@ public class ListaActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        int quantidadeRegistros = gestao.getAllAbastecimento().size();
         super.onResume();
-
-        //verifica se houve inserção
-        if(gestao.getPosicaoInserido() > 0){
-            adapter.notifyItemInserted(gestao.getPosicaoInserido());
-            rv.smoothScrollToPosition(gestao.getAllAbastecimento().size()-1);
-            gestao.setPosicaoInserido(0);
-        }
-
-        //verifica se houve alteração
-        if(gestao.getPosicaoAlterado() > 0){
-            adapter.notifyItemChanged(gestao.getPosicaoAlterado());
-            gestao.setPosicaoAlterado(0);
-        }
-
-        //verifica se houve exclusão
-        if(gestao.getPosicaoDeletado() > 0){
-            adapter.notifyItemRemoved(gestao.getPosicaoDeletado());
-            gestao.setPosicaoDeletado(0);
-        }
     }
 }

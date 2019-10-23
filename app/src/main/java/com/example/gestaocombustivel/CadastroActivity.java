@@ -11,7 +11,11 @@ import android.widget.Toast;
 import com.example.gestaocombustivel.bean.Abastacimento;
 import com.example.gestaocombustivel.dao.GestaoAutonomiaDAO;
 import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.UUID;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
 public class CadastroActivity extends AppCompatActivity {
     private GestaoAutonomiaDAO gestao = GestaoAutonomiaDAO.getInstance();
@@ -50,15 +54,17 @@ public class CadastroActivity extends AppCompatActivity {
 
             //Alteração
             case 4:
-                if (id > 0) {
+                if (id >= 0) {
                     //Resgata o objeto do ID atual
-                    Abastacimento a = gestao.getAbastecimento(id);
+                    Abastacimento a = gestao.getAllAbastecimento().get(id);
 
                     //Seta os textos com os dados já armazenados
                     etQuilo.setText(String.valueOf(a.getQuilometragemAtual()));
                     etLitro.setText(String.valueOf(a.getLitrosAbastecidos()));
                     etData.setText(String.valueOf(a.getDataAbastecimento()));
-                    spPosto.setPromptId(getIndexElementPostos(a.getPosto()));
+                    spPosto.setPrompt(a.getPosto());
+
+                    id = a.getId();
 
                     //refresh em tela
                     etQuilo.refreshDrawableState();
@@ -71,14 +77,6 @@ public class CadastroActivity extends AppCompatActivity {
             default:
                 finish();
         }
-
-        //Listeners
-        spPosto.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                postoEscolhido = postos[position];
-            }
-        });
     }
 
     //Pesquisa o indice correspondente ao valor informado por parametro na array postos
@@ -96,38 +94,40 @@ public class CadastroActivity extends AppCompatActivity {
 
     //Efetua a ação do botão excluir
     public void actionButtonExcluir(View v){
-        Abastacimento a = new Abastacimento();
-        a.setId(id);
-        a.setQuilometragemAtual(Double.parseDouble(etQuilo.getText().toString()));
-        a.setLitrosAbastecidos(Double.parseDouble(etLitro.getText().toString()));
-        a.setDataAbastecimento(Date.valueOf(etData.getText().toString()));
-        a.setPosto(postoEscolhido);
-        gestao.delete(a);
+        gestao.delete(id);
         finish();
     }
 
     //Efetua ação do botão salvar
-    public void actionButtonSalvar(View v){
+    public void actionButtonSalvar(View v) throws ParseException {
         boolean sucess = true;
+
+        if(etQuilo.getText().toString().trim().isEmpty() || etLitro.getText().toString().trim().isEmpty() || etData.getText().toString().trim().isEmpty() ){
+            Toast.makeText(this,"Campos obrigatórios não preenchidos.",Toast.LENGTH_LONG).show();
+            return;
+        }
 
         //Valida a quilometragem se é menor que a ultima cadastrada
         if(Double.parseDouble(etQuilo.getText().toString()) < gestao.getQuilometragemAtual()){
-            Toast.makeText(this,"A quilometragem não pode ser menor que a última cadastrada.",Toast.LENGTH_LONG);
+            Toast.makeText(this,"A quilometragem não pode ser menor que a última cadastrada.",Toast.LENGTH_LONG).show();
             sucess = false;
         }
 
         //Se as validações estiverem OK, salva no banco
         if(sucess){
+            postoEscolhido = postos[spPosto.getSelectedItemPosition()];
+
             Abastacimento a = new Abastacimento();
             a.setQuilometragemAtual(Double.parseDouble(etQuilo.getText().toString()));
             a.setLitrosAbastecidos(Double.parseDouble(etLitro.getText().toString()));
-            a.setDataAbastecimento(Date.valueOf(etData.getText().toString()));
+            a.setDataAbastecimento(new SimpleDateFormat("dd/MM/yyyy").parse(etData.getText().toString()));
             a.setPosto(postoEscolhido);
 
             switch(option){
                 //Inclusão gera ID novo
                 case 3:
-                    a.setId(Integer.parseInt(UUID.randomUUID().toString()));
+                    a.setId(UUID.randomUUID().hashCode());
+                    Toast.makeText(this,String.valueOf(a.getId()), Toast.LENGTH_LONG).show();
                     gestao.insert(a);
                     break;
                 //Atualiza registro com o id atual

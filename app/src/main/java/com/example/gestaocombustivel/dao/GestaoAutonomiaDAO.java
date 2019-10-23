@@ -24,9 +24,9 @@ public class GestaoAutonomiaDAO {
     private GestaoAutonomiaDAO() {
         realm = Realm.getDefaultInstance();
         registros = this.getAllAbastecimento().size();
-        this.setPosicaoInserido(0);
-        this.setPosicaoAlterado(0);
-        this.setPosicaoDeletado(0);
+        this.setPosicaoInserido(-1);
+        this.setPosicaoAlterado(-1);
+        this.setPosicaoDeletado(-1);
     }
 
     //----------------------------------------Métodos-------------------------------------------------
@@ -36,7 +36,7 @@ public class GestaoAutonomiaDAO {
         realm.beginTransaction();
         realm.copyToRealm(a);
         realm.commitTransaction();
-        posicaoInserido = this.getAllAbastecimento().size()-1;
+        posicaoInserido = this.getAllAbastecimento().size();
     }
 
     //Altera um abastecimento
@@ -49,8 +49,12 @@ public class GestaoAutonomiaDAO {
     }
 
     //Resgata a quilometragem atual do carro
-    public double getQuilometragemAtual(){
-        return realm.where(Abastacimento.class).max("quilometragemAtual").doubleValue();
+    public double getQuilometragemAtual() {
+        double quilometragem = 0;
+        if (!realm.isEmpty()){
+            quilometragem = realm.where(Abastacimento.class).max("quilometragemAtual").doubleValue();
+        }
+        return quilometragem;
     }
 
     //Resgata todos os abastecimentos
@@ -85,11 +89,11 @@ public class GestaoAutonomiaDAO {
     }
 
     //Deleta um registro
-    public void delete(Abastacimento a){
+    public void delete(int id){
         realm.beginTransaction();
-        realm.where(Abastacimento.class).equalTo("id", a.getId()).findFirst().deleteFromRealm();
+        posicaoDeletado = getAllAbastecimento().indexOf(realm.where(Abastacimento.class).equalTo("id",id).findFirst());
+        realm.where(Abastacimento.class).equalTo("id",id).findFirst().deleteFromRealm();
         realm.commitTransaction();
-        posicaoDeletado = this.getAllAbastecimento().indexOf(a);
     }
 
     public void setRegistros(int reg){

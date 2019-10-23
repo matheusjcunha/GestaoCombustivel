@@ -36,23 +36,27 @@ public class ListRVAdapter extends RecyclerView.Adapter {
         informacao = "Abastecidos " + String.valueOf(a.getLitrosAbastecidos()) + " litros.";
         informacao += "Km veículo " + String.valueOf(a.getQuilometragemAtual());
         viewHolder.informacao.setText(informacao);
-        viewHolder.setId(a.getId());
+        viewHolder.setId(position);
 
         //Verifica qual imagem do posto será setada
         switch(a.getPosto().trim()){
             case "Texaco":
-                viewHolder.posto.setImageResource(R.drawable.ic_launcher_background);
+                viewHolder.posto.setImageResource(R.drawable.texaco);
                 break;
             case "Shell":
+                viewHolder.posto.setImageResource(R.drawable.shell);
                 break;
             case "Petrobras":
+                viewHolder.posto.setImageResource(R.drawable.petrobras);
                 break;
             case "Ipiranga":
-                break;
-            case "Outros":
+                viewHolder.posto.setImageResource(R.drawable.ipiranga);
                 break;
             default:
+                viewHolder.posto.setImageResource(R.drawable.ic_launcher_background);
         }
+        viewHolder.posto.setMaxHeight(50);
+        viewHolder.posto.setMaxHeight(50);
     }
 
     @Override
