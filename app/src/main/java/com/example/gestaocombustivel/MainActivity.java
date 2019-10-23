@@ -14,7 +14,7 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        GestaoAutonomiaDAO gestao = new GestaoAutonomiaDAO();
+        GestaoAutonomiaDAO gestao = GestaoAutonomiaDAO.getInstance();
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);

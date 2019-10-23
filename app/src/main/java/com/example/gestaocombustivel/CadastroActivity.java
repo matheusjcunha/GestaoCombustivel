@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.UUID;
 
 public class CadastroActivity extends AppCompatActivity {
-    private GestaoAutonomiaDAO gestao = new GestaoAutonomiaDAO();
+    private GestaoAutonomiaDAO gestao = GestaoAutonomiaDAO.getInstance();
     private int id;
     private int option;
     private EditText etQuilo;

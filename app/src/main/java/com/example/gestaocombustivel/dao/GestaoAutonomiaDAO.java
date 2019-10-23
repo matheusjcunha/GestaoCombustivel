@@ -2,46 +2,41 @@ package com.example.gestaocombustivel.dao;
 
 import com.example.gestaocombustivel.bean.Abastacimento;
 import java.util.ArrayList;
-import java.util.function.Consumer;
-
 import io.realm.Realm;
-import io.realm.RealmObject;
+import io.realm.RealmResults;
 
-public class GestaoAutonomiaDAO extends RealmObject {
-    private final Realm db;
-
-    public GestaoAutonomiaDAO(){
-        db = Realm.getDefaultInstance();
-    }
+public class GestaoAutonomiaDAO {
+    private Realm realm;
 
     //Inseri um novo abastecimento
     public void insert(Abastacimento a){
-        db.beginTransaction();
-        db.insert(a);
-        db.commitTransaction();
+        realm.beginTransaction();
+        realm.insert(a);
+        realm.commitTransaction();
     }
 
     //Altera um abastecimento
     public void update(Abastacimento a){
-        db.beginTransaction();
-        db.insertOrUpdate(a);
-        db.commitTransaction();
+        realm.beginTransaction();
+        realm.insertOrUpdate(a);
+        realm.commitTransaction();
     }
 
     //Resgata a quilometragem atual do carro
     public double getQuilometragemAtual(){
-        Number id = db.where(Abastacimento.class).max("quilometragemAtual");
-        Abastacimento a = db.where(Abastacimento.class).equalTo("id",id.intValue()).findFirst();
-        return a.getQuilometragemAtual();
+        return realm.where(Abastacimento.class).max("quilometragemAtual").doubleValue();
     }
 
     //Resgata todos os abastecimentos
     public ArrayList<Abastacimento> getAllAbastecimento(){
-        return (ArrayList<Abastacimento>) db.where(Abastacimento.class).findAll().iterator();
+        ArrayList<Abastacimento> lista = new ArrayList();
+        RealmResults result = realm.where(Abastacimento.class).findAll();
+        lista.addAll(realm.copyFromRealm(result));
+        return lista;
     }
 
     public Abastacimento getAbastecimento(int id){
-        return db.where(Abastacimento.class).equalTo("id",id).findFirst();
+        return realm.where(Abastacimento.class).equalTo("id",id).findFirst();
     }
 
     //Calcula a autonomia do veículo
@@ -65,8 +60,20 @@ public class GestaoAutonomiaDAO extends RealmObject {
 
     //Deleta um registro
     public void delete(Abastacimento a){
-        db.beginTransaction();
-        db.delete(a.getClass());
-        db.commitTransaction();
+        realm.beginTransaction();
+        realm.delete(a.getClass());
+        realm.commitTransaction();
+    }
+
+    //Singletoon
+    private static GestaoAutonomiaDAO INSTANCIA;
+    public static GestaoAutonomiaDAO getInstance(){
+        if (INSTANCIA == null){
+            INSTANCIA = new GestaoAutonomiaDAO();
+        }
+        return INSTANCIA;
+    }
+    private GestaoAutonomiaDAO() {
+        realm = Realm.getDefaultInstance();
     }
 }
