@@ -58,11 +58,13 @@ public class CadastroActivity extends AppCompatActivity {
                     etQuilo.setText(String.valueOf(a.getQuilometragemAtual()));
                     etLitro.setText(String.valueOf(a.getLitrosAbastecidos()));
                     etData.setText(String.valueOf(a.getDataAbastecimento()));
+                    spPosto.setPromptId(getIndexElementPostos(a.getPosto()));
 
                     //refresh em tela
                     etQuilo.refreshDrawableState();
                     etLitro.refreshDrawableState();
                     etData.refreshDrawableState();
+                    spPosto.refreshDrawableState();
                 }
                 break;
             //Finaliza a activity caso não seja nenhuma das opções
@@ -77,6 +79,19 @@ public class CadastroActivity extends AppCompatActivity {
                 postoEscolhido = postos[position];
             }
         });
+    }
+
+    //Pesquisa o indice correspondente ao valor informado por parametro na array postos
+    private int getIndexElementPostos(String value){
+        int index = 0;
+
+        for(int i = 0; i < postos.length; i++){
+            if(value.trim() == postos[i].trim()){
+                index = i;
+            }
+        }
+
+        return index;
     }
 
     //Efetua a ação do botão excluir
