@@ -3,27 +3,26 @@ package com.example.gestaocombustivel;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-
 import com.example.gestaocombustivel.adapters.ListRVAdapter;
-import com.example.gestaocombustivel.bean.Abastacimento;
-
-import java.util.ArrayList;
+import com.example.gestaocombustivel.dao.GestaoAutonomiaDAO;
 
 public class ListaActivity extends AppCompatActivity {
-    private ArrayList<Abastacimento> lista;
+    private ListRVAdapter adapter;
+    private GestaoAutonomiaDAO gestao = GestaoAutonomiaDAO.getInstance();
+    private RecyclerView rv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lista);
 
-        RecyclerView rv = findViewById(R.id.rvLista);
+        rv = findViewById(R.id.rvLista);
+        adapter = new ListRVAdapter(this);
 
-        rv.setAdapter(new ListRVAdapter(lista,this));
+        rv.setAdapter(adapter);
         RecyclerView.LayoutManager layout = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         rv.setLayoutManager(layout);
     }
@@ -41,5 +40,30 @@ public class ListaActivity extends AppCompatActivity {
         Intent intencao = new Intent(this, CadastroActivity.class);
         intencao.putExtra("opc", 3);
         startActivity(intencao);
+    }
+
+    @Override
+    protected void onResume() {
+        int quantidadeRegistros = gestao.getAllAbastecimento().size();
+        super.onResume();
+
+        //verifica se houve inserção
+        if(gestao.getPosicaoInserido() > 0){
+            adapter.notifyItemInserted(gestao.getPosicaoInserido());
+            rv.smoothScrollToPosition(gestao.getAllAbastecimento().size()-1);
+            gestao.setPosicaoInserido(0);
+        }
+
+        //verifica se houve alteração
+        if(gestao.getPosicaoAlterado() > 0){
+            adapter.notifyItemChanged(gestao.getPosicaoAlterado());
+            gestao.setPosicaoAlterado(0);
+        }
+
+        //verifica se houve exclusão
+        if(gestao.getPosicaoDeletado() > 0){
+            adapter.notifyItemRemoved(gestao.getPosicaoDeletado());
+            gestao.setPosicaoDeletado(0);
+        }
     }
 }

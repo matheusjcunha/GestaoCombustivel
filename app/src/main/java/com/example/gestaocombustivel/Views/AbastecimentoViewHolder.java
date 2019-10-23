@@ -1,13 +1,10 @@
 package com.example.gestaocombustivel.Views;
 
-import android.app.ListActivity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.gestaocombustivel.ListaActivity;
 import com.example.gestaocombustivel.R;
 

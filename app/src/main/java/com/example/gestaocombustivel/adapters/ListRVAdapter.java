@@ -9,15 +9,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.gestaocombustivel.R;
 import com.example.gestaocombustivel.Views.AbastecimentoViewHolder;
 import com.example.gestaocombustivel.bean.Abastacimento;
-import java.util.ArrayList;
-
+import com.example.gestaocombustivel.dao.GestaoAutonomiaDAO;
 
 public class ListRVAdapter extends RecyclerView.Adapter {
-    private ArrayList<Abastacimento> abastacimentos;
     private Context context;
 
-    public ListRVAdapter(ArrayList<Abastacimento> abastecimento,Context context){
-        this.abastacimentos = abastecimento;
+    public ListRVAdapter(Context context){
         this.context = context;
     }
 
@@ -32,7 +29,7 @@ public class ListRVAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         String informacao;
         AbastecimentoViewHolder viewHolder = (AbastecimentoViewHolder) holder;
-        Abastacimento a = abastacimentos.get(position);
+        Abastacimento a = GestaoAutonomiaDAO.getInstance().getAllAbastecimento().get(position);
 
         //Seta os dados do ViewHolder implementado
         viewHolder.data.setText(a.getDataAbastecimento().toString());
@@ -60,6 +57,6 @@ public class ListRVAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemCount() {
-        return abastacimentos.size();
+        return GestaoAutonomiaDAO.getInstance().getAllAbastecimento().size();
     }
 }
