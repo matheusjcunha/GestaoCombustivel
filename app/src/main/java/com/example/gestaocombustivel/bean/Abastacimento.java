@@ -17,53 +17,34 @@ public class Abastacimento extends RealmObject {
     @Ignore
     private Calendar calendarAbastecimento;
     private String posto;
+    private String caminhoFoto;
 
-
-    public double getQuilometragemAtual() {
-        return quilometragemAtual;
-    }
-
-    public void setQuilometragemAtual(double quilometragemAtual) {
-        this.quilometragemAtual = quilometragemAtual;
-    }
-
+    public double getQuilometragemAtual() { return quilometragemAtual; }
+    public void setQuilometragemAtual(double quilometragemAtual) { this.quilometragemAtual = quilometragemAtual; }
     public double getLitrosAbastecidos() {
         return litrosAbastecidos;
     }
-
-    public void setLitrosAbastecidos(double litrosAbastecidos) {
-        this.litrosAbastecidos = litrosAbastecidos;
-    }
-
+    public void setLitrosAbastecidos(double litrosAbastecidos) { this.litrosAbastecidos = litrosAbastecidos; }
     public Date getDataAbastecimento() {
         return dataAbastecimento;
     }
-
-    public void setDataAbastecimento(Date dataAbastecimento) {
-        this.dataAbastecimento = dataAbastecimento;
-    }
-
+    public void setDataAbastecimento(Date dataAbastecimento) { this.dataAbastecimento = dataAbastecimento; }
     public String getPosto() {
         return posto;
     }
-
     public void setPosto(String posto) {
         this.posto = posto;
     }
-
     public int getId() {
         return id;
     }
-
     public void setId(int id) {
         this.id = id;
     }
-
     public Calendar getCalendarAbastecimento() {
         return calendarAbastecimento;
     }
-
-    public void setCalendarAbastecimento(Calendar calendarAbastecimento) {
-        this.calendarAbastecimento = calendarAbastecimento;
-    }
+    public void setCalendarAbastecimento(Calendar calendarAbastecimento) { this.calendarAbastecimento = calendarAbastecimento; }
+    public String getCaminhoFoto() { return caminhoFoto; }
+    public void setCaminhoFoto(String caminhoFoto) { this.caminhoFoto = caminhoFoto; }
 }

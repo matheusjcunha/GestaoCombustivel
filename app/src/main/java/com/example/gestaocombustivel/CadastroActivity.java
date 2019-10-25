@@ -1,21 +1,28 @@
 package com.example.gestaocombustivel;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
+
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 import com.example.gestaocombustivel.bean.Abastacimento;
 import com.example.gestaocombustivel.dao.GestaoAutonomiaDAO;
-import java.sql.Date;
+
+import java.io.File;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.UUID;
-import java.util.logging.LogRecord;
-import java.util.logging.Logger;
 
 public class CadastroActivity extends AppCompatActivity {
     private GestaoAutonomiaDAO gestao = GestaoAutonomiaDAO.getInstance();
@@ -27,6 +34,8 @@ public class CadastroActivity extends AppCompatActivity {
     private Spinner spPosto;
     private String postoEscolhido = "Texaco";
     private String postos[] = {"Texaco","Shell","Petrobras","Ipiranga","Outros"};
+    private ImageView ivFoto;
+    private String caminhoDaFoto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +51,7 @@ public class CadastroActivity extends AppCompatActivity {
         spPosto = findViewById(R.id.spPosto);
         Button btSalvar = findViewById(R.id.btSalvar);
         Button btExcluir = findViewById(R.id.btExcluir);
+        ivFoto = findViewById(R.id.ivFoto);
 
         //Verifica a opção sendo feita
         switch (option) {
@@ -64,6 +74,11 @@ public class CadastroActivity extends AppCompatActivity {
                     etData.setText(String.valueOf(a.getDataAbastecimento()));
                     spPosto.setPrompt(a.getPosto());
 
+                    if(a.getCaminhoFoto() != null){
+                        ImageView ivFotografia = findViewById(R.id.ivFoto);
+                        ivFotografia.setImageURI(Uri.parse(a.getCaminhoFoto()));
+                    }
+
                     id = a.getId();
 
                     //refresh em tela
@@ -77,6 +92,13 @@ public class CadastroActivity extends AppCompatActivity {
             default:
                 finish();
         }
+
+        ivFoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
     }
 
     //Pesquisa o indice correspondente ao valor informado por parametro na array postos
@@ -122,6 +144,7 @@ public class CadastroActivity extends AppCompatActivity {
             a.setLitrosAbastecidos(Double.parseDouble(etLitro.getText().toString()));
             a.setDataAbastecimento(new SimpleDateFormat("dd/MM/yyyy").parse(etData.getText().toString()));
             a.setPosto(postoEscolhido);
+            a.setCaminhoFoto(caminhoDaFoto);
 
             switch(option){
                 //Inclusão gera ID novo
@@ -138,6 +161,48 @@ public class CadastroActivity extends AppCompatActivity {
             }
 
             finish();
+        }
+    }
+
+    private File criarArquivoParaSalvarFoto() throws IOException {
+        String nomeFoto = UUID.randomUUID().toString();
+        //getExternalStoragePublicDirectory()
+        //    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+        File diretorio = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File fotografia = File.createTempFile(nomeFoto,".jpg",diretorio);
+        caminhoDaFoto = fotografia.getAbsolutePath();
+        return fotografia;
+    }
+
+    public void abrirCamera(View v){
+        Intent intecaoAbrirCamera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+        File arquivoDaFoto = null;
+        try {
+            arquivoDaFoto = criarArquivoParaSalvarFoto();
+        } catch (IOException ex) {
+            Toast.makeText(this, "Não foi possível criar arquivo para foto", Toast.LENGTH_LONG).show();
+        }
+        if (arquivoDaFoto != null) {
+            Uri fotoURI = FileProvider.getUriForFile(this,
+                    "com.example.a02_listas.fileprovider",
+                    arquivoDaFoto);
+            intecaoAbrirCamera.putExtra(MediaStore.EXTRA_OUTPUT, fotoURI);
+            startActivityForResult(intecaoAbrirCamera, 30);
+        }
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 30){
+            if(resultCode == RESULT_OK){
+                if(caminhoDaFoto != null){
+                    ImageView ivFotografia = findViewById(R.id.ivFoto);
+                    ivFotografia.setImageURI(Uri.parse(caminhoDaFoto));
+                }
+            }
         }
     }
 }

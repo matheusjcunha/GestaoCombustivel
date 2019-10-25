@@ -45,5 +45,6 @@ public class ListaActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        super.recreate();
     }
 }
